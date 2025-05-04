@@ -1,0 +1,6 @@
+@CadastroDeProcessos.Web_HostAddress = http://localhost:5250
+
+GET {{CadastroDeProcessos.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
