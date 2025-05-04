@@ -18,7 +18,6 @@ export default {
       
       const data = await response.json();
       
-      // Armazena o token e informações do usuário
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -31,23 +30,19 @@ export default {
     }
   },
   
-  // Logout
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   },
   
-  // Verifica se está autenticado
   isAuthenticated() {
     return !!localStorage.getItem('token');
   },
   
-  // Obtém o usuário atual
   getCurrentUser() {
     return JSON.parse(localStorage.getItem('user') || '{}');
   },
   
-  // Obtém o token
   getToken() {
     return localStorage.getItem('token');
   }

@@ -4,7 +4,6 @@
       <h2 class="text-primary font-bold text-2xl">Processos Cadastrados</h2>
       
       <div class="flex align-items-center gap-3">
-        <!-- Barra de pesquisa -->
         <div class="custom-search-container">
           <i class="pi pi-search custom-search-icon"></i>
           <PrimeInputText 
@@ -109,7 +108,6 @@
       />
     </div>
 
-    <!-- Dialog de Confirmação de Exclusão -->
     <PrimeDialog 
       v-model:visible="deleteDialogVisible"
       :modal="true"
@@ -206,7 +204,6 @@ export default {
       municipio: { value: null, matchMode: FilterMatchMode.CONTAINS }
     });
     
-    // Observer para atualizar o filtro global
     watch(globalFilterValue, (newValue) => {
       filters.value.global.value = newValue;
     });
@@ -282,7 +279,6 @@ export default {
       fetchProcessos();
     };
     
-    // Adicionando o método onPageChange que é chamado no template
     const onPageChange = (event) => {
       lazyParams.value = {
         ...lazyParams.value,
@@ -405,7 +401,7 @@ export default {
       globalFilterValue,
       deleteDialogVisible,
       selectedProcesso,
-      first, // Adicionada a propriedade first
+      first, 
       formatDate,
       navigateToCreate,
       viewProcessoDetails,
@@ -415,7 +411,7 @@ export default {
       deleteProcesso,
       clearFilter,
       onPage,
-      onPageChange, // Adicionado o método onPageChange no return
+      onPageChange, 
       onSort
     };
   }
@@ -471,7 +467,6 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo personalizado para o diálogo de confirmação de exclusão*/
 :deep(.delete-confirmation-dialog .p-dialog-header) {
   padding: 1.25rem 1.5rem 0.5rem;
   border-bottom: none;
@@ -492,22 +487,20 @@ export default {
 }
 
 .process-info-list {
-  padding-left: 0; /* Remove o recuo padrão que possa existir */
+  padding-left: 0;
 }
 
-/* Estilo específico para alinhar os campos com a pergunta */
 .process-info-item {
   display: flex;
   align-items: center;
-  padding-left: 0; /* Remove qualquer padding padrão */
+  padding-left: 0; 
 }
 
 .process-info-item .font-bold {
-  width: 70px; /* Largura fixa para os rótulos */
+  width: 70px; 
   display: inline-block;
 }
 
-/* Estilo para os botões do mesmo tamanho */
 .confirm-button {
   height: 2.5rem !important;
   min-width: 6rem !important;
@@ -516,7 +509,6 @@ export default {
   justify-content: center;
 }
 
-/* Novas classes para a barra de pesquisa personalizada */
 .custom-search-container {
   position: relative;
   display: inline-block;
@@ -543,7 +535,6 @@ export default {
   transform: translateY(-50%);
 }
 
-/* Adicionar variável de cores primárias em RGB para uso com opacidade */
 :root {
   --primary-color-rgb: 25, 118, 210;
 }

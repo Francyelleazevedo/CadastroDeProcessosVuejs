@@ -5,7 +5,6 @@
       <h1 class="text-2xl font-bold m-0 text-primary">Novo Processo</h1>
     </div>
 
-    <!-- Formulário de processo usando o componente -->
     <ProcessoForm 
       v-model="processo"
       :loading="salvando"
@@ -14,7 +13,6 @@
       @voltar="voltar"
     />
 
-    <!-- Mensagens de erro/sucesso -->
     <PrimeToast position="top-right" />
   </div>
 </template>
@@ -46,12 +44,10 @@ export default {
     
     const salvando = ref(false);
     
-    // Salvar o processo
     const salvarProcesso = async (dadosProcesso) => {
       try {
         salvando.value = true;
         
-        // Obter o token do localStorage
         const token = localStorage.getItem('token');
         
         if (!token) {
@@ -67,7 +63,6 @@ export default {
         
         console.log('Enviando dados:', dadosProcesso);
         
-        // Enviar dados para a API
         await axios.post('https://localhost:7041/api/processo', dadosProcesso, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -75,7 +70,6 @@ export default {
           }
         });
         
-        // Exibir mensagem de sucesso
         toast.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -83,7 +77,6 @@ export default {
           life: 3000
         });
         
-        // Aguardar para mostrar o toast antes de redirecionar
         setTimeout(() => {
           router.push('/processos');
         }, 1500);
@@ -113,7 +106,6 @@ export default {
       }
     };
     
-    // Voltar para a lista de processos
     const voltar = () => {
       router.push('/processos');
     };

@@ -43,7 +43,6 @@ const routes = [
     component:() => import('../views/Processos/Edit.vue'),
     props: true
   },
-  // Rota de fallback
   {
     path: '/:pathMatch(.*)*',
     redirect: '/'
@@ -55,7 +54,6 @@ const router = createRouter({
   routes
 })
 
-// Adiciona log para depuração
 router.afterEach((to) => {
   console.log(`Navegação concluída: ${to.path}`);
 })

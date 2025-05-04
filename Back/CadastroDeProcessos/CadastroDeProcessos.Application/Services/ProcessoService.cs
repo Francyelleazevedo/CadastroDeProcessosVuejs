@@ -99,6 +99,7 @@ namespace CadastroDeProcessos.Application.Services
         }
         #endregion
 
+        #region Confirmar Visualizacao
         public async Task ConfirmarVisualizacaoAsync(int id)
         {
             ValidateId(id);
@@ -114,10 +115,13 @@ namespace CadastroDeProcessos.Application.Services
                 throw new Exception("Erro ao confirmar a visualização do processo.", ex);
             }
         }
+        #endregion
 
+        #region Validações
         private static void ValidateId(int id)
         {
             if (id <= 0) throw new ArgumentException("O ID deve ser maior que zero.", nameof(id));
         }
+        #endregion
     }
 }

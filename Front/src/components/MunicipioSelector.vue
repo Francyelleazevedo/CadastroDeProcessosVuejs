@@ -1,4 +1,3 @@
-// components/MunicipioSelector.vue
 <template>
   <div class="field">
     <label :for="id" class="block mb-2 font-bold">
@@ -60,7 +59,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'change', 'codigo-municipio'],
+  emits: ['update:modelValue', 'change', 'codigo-municipio', 'auth-error'],
   setup(props, { emit }) {
     const toast = useToast();
     const selectedMunicipio = ref(props.modelValue);
@@ -68,22 +67,23 @@ export default {
     const isLoading = ref(props.loading);
     const codigoMunicipio = ref('');
     
-    // Observar mudanças no valor do modelo
+    // Função para obter o token de autenticação do localStorage
+    const getToken = () => {
+      return localStorage.getItem('token');
+    };
+    
     watch(() => props.modelValue, (newValue) => {
       selectedMunicipio.value = newValue;
     });
     
-    // Observar mudanças no loading
     watch(() => props.loading, (newValue) => {
       isLoading.value = newValue;
     });
     
-    // Emitir mudanças para o componente pai
     watch(selectedMunicipio, (newValue) => {
       emit('update:modelValue', newValue);
     });
     
-    // Observar mudanças na UF para carregar municípios
     watch(() => props.uf, async (newUF) => {
       if (newUF) {
         await carregarMunicipios(newUF);
@@ -95,26 +95,46 @@ export default {
       }
     });
     
-    // Carregar municípios com base na UF selecionada
     const carregarMunicipios = async (uf) => {
       if (!uf) return;
       
       try {
         isLoading.value = true;
-        
-        // Limpar lista de municípios enquanto carrega
         municipios.value = [];
         
-        // Usar API do IBGE
-        const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
+        // Obter token do localStorage
+        const token = getToken();
+        
+        if (!token) {
+          console.error('Token não encontrado no localStorage');
+          toast.add({
+            severity: 'error',
+            summary: 'Erro de autenticação',
+            detail: 'Você precisa estar autenticado para acessar esta funcionalidade.',
+            life: 3000
+          });
+          emit('auth-error', 'Token não encontrado');
+          return;
+        }
+        
+        // Incluir o token na requisição
+        const response = await fetch(`https://localhost:7041/api/localidades/municipios/${uf}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Sessão expirada ou token inválido');
+          }
           throw new Error(`Falha ao carregar municípios para UF ${uf}`);
         }
         
         const data = await response.json();
         
-        // Mapear dados para o formato esperado
         municipios.value = data.map(municipio => ({
           nome: municipio.nome,
           codigo: municipio.id.toString()
@@ -122,23 +142,19 @@ export default {
         
         console.log(`${municipios.value.length} municípios carregados para UF ${uf}`);
         
-        // Se tinha um município selecionado anteriormente, verificar se ainda está disponível
         if (selectedMunicipio.value) {
           const municipioAindaExiste = municipios.value.find(m => m.nome === selectedMunicipio.value);
           
           if (municipioAindaExiste) {
-            // O município ainda existe na nova lista, manter selecionado e atualizar código
             codigoMunicipio.value = municipioAindaExiste.codigo;
             emit('codigo-municipio', codigoMunicipio.value);
             console.log(`Município mantido após troca de UF: ${selectedMunicipio.value} (${codigoMunicipio.value})`);
-          } else {
-            // O município não existe mais na nova lista, limpar seleção
+          } else {  
             console.warn(`Município anterior '${selectedMunicipio.value}' não está disponível para a UF ${uf}`);
             selectedMunicipio.value = '';
             codigoMunicipio.value = '';
             emit('codigo-municipio', '');
             
-            // Exibir alerta
             toast.add({
               severity: 'info',
               summary: 'Município alterado',
@@ -149,37 +165,44 @@ export default {
         }
       } catch (error) {
         console.error('Erro ao carregar municípios:', error);
-        toast.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Não foi possível carregar a lista de municípios.',
-          life: 3000
-        });
+        
+        // Tratamento específico para erros de autenticação
+        if (error.message.includes('Sessão expirada') || error.message.includes('token')) {
+          toast.add({
+            severity: 'error',
+            summary: 'Erro de autenticação',
+            detail: 'Sua sessão expirou. Por favor, faça login novamente.',
+            life: 5000
+          });
+          emit('auth-error', error.message);
+        } else {
+          toast.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível carregar a lista de municípios.',
+            life: 3000
+          });
+        }
       } finally {
         isLoading.value = false;
       }
     };
     
-    // Quando o usuário seleciona um município
     const onChange = () => {
       atualizarCodigoMunicipio();
       emit('change', selectedMunicipio.value);
     };
     
-    // Atualizar o código do município quando um é selecionado
     const atualizarCodigoMunicipio = () => {
-      // Limpar o código do município se não houver município selecionado
       if (!selectedMunicipio.value) {
         codigoMunicipio.value = '';
         emit('codigo-municipio', '');
         return;
       }
       
-      // Buscar o município na lista de municípios carregados
       const municipioSelecionado = municipios.value.find(m => m.nome === selectedMunicipio.value);
       
       if (municipioSelecionado) {
-        // Atualizar o código do município com o valor da lista
         codigoMunicipio.value = municipioSelecionado.codigo;
         emit('codigo-municipio', codigoMunicipio.value);
         console.log(`Código do município atualizado: ${selectedMunicipio.value} -> ${codigoMunicipio.value}`);
@@ -188,7 +211,6 @@ export default {
         codigoMunicipio.value = '';
         emit('codigo-municipio', '');
         
-        // Alertar usuário
         toast.add({
           severity: 'warn',
           summary: 'Atenção',
@@ -198,9 +220,7 @@ export default {
       }
     };
     
-    // Inicialização
     onMounted(() => {
-      // Se já houver uma UF definida, carregar os municípios
       if (props.uf) {
         carregarMunicipios(props.uf);
       }
@@ -220,7 +240,7 @@ export default {
 <style scoped>
 :deep(.p-dropdown) {
   width: 100%;
-  height: 54px; /* Garante altura consistente */
+  height: 54px;
 }
 
 :deep(.p-dropdown .p-dropdown-label) {

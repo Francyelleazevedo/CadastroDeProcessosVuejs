@@ -1,4 +1,3 @@
-// components/UFSelector.vue
 <template>
   <div class="field">
     <label :for="id" class="block mb-2 font-bold">
@@ -81,17 +80,14 @@ export default {
       { nome: 'Tocantins', sigla: 'TO' }
     ]);
     
-    // Observar mudanças no valor do modelo
     watch(() => props.modelValue, (newValue) => {
       selectedUF.value = newValue;
     });
     
-    // Emitir mudanças para o componente pai
     watch(selectedUF, (newValue) => {
       emit('update:modelValue', newValue);
     });
     
-    // Quando o usuário seleciona uma UF
     const onChange = () => {
       emit('change', selectedUF.value);
     };
@@ -108,7 +104,7 @@ export default {
 <style scoped>
 :deep(.p-dropdown) {
   width: 100%;
-  height: 54px; /* Garante altura consistente */
+  height: 54px;
 }
 
 :deep(.p-dropdown .p-dropdown-label) {

@@ -1,10 +1,8 @@
 <template>
   <div class="login-page flex align-items-center justify-content-center">
-    <!-- Posição alterada para top-right -->
     <PrimeToast position="top-right" />
     
     <div class="surface-card p-5 shadow-4 border-round w-full lg:w-6">
-      <!-- Resto do template permanece o mesmo -->
       <div class="text-center mb-5">
         <div class="mb-4">
           <i class="pi pi-users text-primary" style="font-size: 3.5rem"></i>
@@ -146,7 +144,6 @@ export default {
     // Capturar e logar texto da resposta mesmo com erro
     const responseText = await response.text();
     
-    // Tentar parsear como JSON se possível
     let data;
     try {
       data = JSON.parse(responseText);
@@ -158,16 +155,14 @@ export default {
       throw new Error(data?.message || 'Falha na autenticação');
     }
     
-    // Se chegarmos aqui, a resposta está ok
     if (data) {
-      // Salvar token e informações do usuário
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user || { email: email.value }));
       
       showToast('success', 'Login bem-sucedido');
       
       setTimeout(() => {
-  router.push('/processos'); // Redirecionando para a lista de processos
+  router.push('/processos');
 }, 1500);
     }
   } catch (error) {
@@ -189,14 +184,13 @@ export default {
       loading,
       submitted,
       handleLogin,
-      goToRegister // Adicione na lista de retorno
+      goToRegister
     };
   }
 }
 </script>
 
 <style scoped>
-/* Estilos anteriores mantidos */
 .login-page {
   min-height: 100vh;
   background-color: var(--surface-ground);
@@ -225,23 +219,19 @@ export default {
   width: 100%;
 }
 
-/* Melhoria nos estilos dos inputs quando focados */
 :deep(.p-inputtext:enabled:focus) {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 1px var(--primary-color);
 }
 
-/* Botão com transição suave */
 :deep(.p-button) {
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Efeito hover em links */
 a.text-blue-500 {
   transition: color 0.2s;
 }
 
-/* Novos estilos modernos para o toast */
 :deep(.p-toast) {
   opacity: 1;
   top: 20px;
@@ -263,28 +253,24 @@ a.text-blue-500 {
   border: none;
 }
 
-/* Toast de Sucesso */
 :deep(.p-toast .p-toast-message.p-toast-message-success .p-toast-message-content) {
   background: linear-gradient(145deg, var(--green-50), var(--green-100));
   border-bottom: 3px solid var(--green-500);
   color: var(--green-900);
 }
 
-/* Toast de Informação */
 :deep(.p-toast .p-toast-message.p-toast-message-info .p-toast-message-content) {
   background: linear-gradient(145deg, var(--blue-50), var(--blue-100));
   border-bottom: 3px solid var(--blue-500);
   color: var(--blue-900);
 }
 
-/* Toast de Aviso */
 :deep(.p-toast .p-toast-message.p-toast-message-warn .p-toast-message-content) {
   background: linear-gradient(145deg, var(--yellow-50), var(--yellow-100));
   border-bottom: 3px solid var(--yellow-500);
   color: var(--yellow-900);
 }
 
-/* Toast de Erro */
 :deep(.p-toast .p-toast-message.p-toast-message-error .p-toast-message-content) {
   background: linear-gradient(145deg, var(--pink-50), var(--pink-100));
   border-bottom: 3px solid var(--pink-500);
@@ -336,7 +322,6 @@ a.text-blue-500 {
   margin-bottom: 0.25rem;
 }
 
-/* Animação de entrada e saída do toast */
 :deep(.p-toast-top-right .p-toast-message) {
   transform-origin: top right;
   animation: toastSlideDown 0.3s;
@@ -353,7 +338,6 @@ a.text-blue-500 {
   }
 }
 
-/* Estilo do botão de fechamento do toast */
 :deep(.p-toast .p-toast-message .p-toast-icon-close) {
   width: 2rem;
   height: 2rem;

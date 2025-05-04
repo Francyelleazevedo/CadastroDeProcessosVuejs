@@ -1,4 +1,3 @@
-// components/ProcessoForm.vue
 <template>
   <div class="grid">
     <div class="col-12 md:col-6 mb-3">
@@ -61,7 +60,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
 import { reactive, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import NPUInput from './NpuInput.vue';
@@ -76,7 +74,6 @@ export default {
     MunicipioSelector
   },
   props: {
-    // Valor inicial do formulário
     modelValue: {
       type: Object,
       default: () => ({
@@ -88,12 +85,10 @@ export default {
         codigoMunicipio: ""
       })
     },
-    // Para controlar o estado de carregamento
     loading: {
       type: Boolean,
       default: false
     },
-    // Configuração do botão de salvar
     botaoSubmit: {
       type: Object,
       default: () => ({
@@ -101,7 +96,6 @@ export default {
         icon: 'pi pi-save'
       })
     },
-    // Configuração do botão de voltar
     botaoVoltar: {
       type: Object,
       default: () => ({
@@ -109,7 +103,6 @@ export default {
         icon: 'pi pi-arrow-left'
       })
     },
-    // Determina se é uma edição (true) ou criação (false)
     isEdit: {
       type: Boolean,
       default: false
@@ -122,54 +115,41 @@ export default {
     const carregandoMunicipios = ref(false);
     const errors = reactive({});
     
-    // Observar mudanças no modelValue para sincronizar com formData
     watch(() => props.modelValue, (newValue) => {
       Object.assign(formData, newValue);
     }, { deep: true });
     
-    // Emitir mudanças no formData para o componente pai
     watch(formData, (newValue) => {
       emit('update:modelValue', { ...newValue });
     }, { deep: true });
     
-    // Quando a UF muda
-    // eslint-disable-next-line no-unused-vars
     const onUFChange = () => {
       carregandoMunicipios.value = true;
-      // O componente MunicipioSelector vai tratar o carregamento dos municípios internamente
       setTimeout(() => {
         carregandoMunicipios.value = false;
       }, 100);
     };
     
-    // Quando o código do município é atualizado pelo componente MunicipioSelector
     const onCodigoMunicipioChange = (codigo) => {
       formData.codigoMunicipio = codigo;
     };
     
-    // Validar o formulário
     const validarFormulario = () => {
-      // Limpar erros anteriores
       Object.keys(errors).forEach(key => delete errors[key]);
       
-      // Validar campos obrigatórios
       if (!formData.nomeProcesso) errors.nomeProcesso = 'O nome do processo é obrigatório';
       if (!formData.npu) errors.npu = 'O NPU é obrigatório';
       if (!formData.uf) errors.uf = 'A UF é obrigatória';
       if (!formData.municipio) errors.municipio = 'O município é obrigatório';
       
-      // Validar código do município
       if (formData.municipio && !formData.codigoMunicipio) {
         errors.municipio = 'Código do município não encontrado. Selecione o município novamente.';
       }
       
-      // Verificar se há erros
       return Object.keys(errors).length === 0;
     };
     
-    // Método para submeter o formulário
     const onSubmit = () => {
-      // Validar formulário antes de enviar
       if (!validarFormulario()) {
         toast.add({
           severity: 'warn',
@@ -180,7 +160,6 @@ export default {
         return;
       }
       
-      // Verificação adicional para o código do município
       if (!formData.codigoMunicipio && formData.municipio) {
         toast.add({
           severity: 'error',
@@ -191,7 +170,6 @@ export default {
         return;
       }
       
-      // Criar objeto com dados formatados para envio
       const dadosProcesso = {
         nomeProcesso: formData.nomeProcesso,
         npu: formData.npu,
@@ -200,12 +178,10 @@ export default {
         codigoMunicipio: formData.codigoMunicipio?.toString() || ''
       };
       
-      // Se for edição, incluir ID
       if (props.isEdit && formData.id) {
         dadosProcesso.id = formData.id;
       }
       
-      // Emitir evento de submissão com os dados
       emit('submit', dadosProcesso);
     };
     
@@ -213,7 +189,6 @@ export default {
       emit('voltar');
     };
     
-    // Inicialização - realizamos essa lógica agora no MunicipioSelector
     
     return {
       formData,
@@ -232,11 +207,10 @@ export default {
 :deep(.p-inputtext.p-inputtext-lg) {
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  height: 54px; /* Mantém altura consistente para inputs */
+  height: 54px;
 }
 
 :deep(.p-button-lg) {
-  /* Ajuste dos botões para tamanho menor */
   padding: 0.5rem 1.25rem;
   font-size: 0.9rem;
   height: 44px; /* Altura reduzida */

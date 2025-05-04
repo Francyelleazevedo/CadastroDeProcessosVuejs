@@ -1,4 +1,3 @@
-// Details.vue
 <template>
   <div class="card p-4">
     <div class="flex flex-column md:flex-row justify-content-between align-items-center mb-4">
@@ -10,12 +9,10 @@
       </div>
     </div>
 
-    <!-- Loading spinner -->
     <div v-if="loading" class="flex justify-content-center my-5">
       <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
     </div>
 
-    <!-- Formulário de processo usando o componente -->
     <ProcessoForm 
       v-else
       v-model="processo"
@@ -26,7 +23,6 @@
       @voltar="voltar"
     />
 
-    <!-- Mensagens de erro/sucesso -->
     <PrimeToast position="top-right" />
   </div>
 </template>
@@ -54,7 +50,6 @@ export default {
     const router = useRouter();
     const route = useRoute();
     
-    // Estado
     const processo = reactive({
       id: null,
       nomeProcesso: "",
@@ -69,12 +64,10 @@ export default {
     const loading = ref(false);
     const salvando = ref(false);
     
-    // Carregar dados do processo
     const carregarProcesso = async (processoId) => {
       try {
         loading.value = true;
         
-        // Obter o token do localStorage
         const token = localStorage.getItem('token');
         
         if (!token) {
@@ -88,7 +81,6 @@ export default {
           return;
         }
         
-        // Buscar os dados do processo
         const response = await axios.get(`https://localhost:7041/api/processo/${processoId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -96,11 +88,9 @@ export default {
           }
         });
         
-        // Atualizar os dados do processo
         const dadosRecebidos = response.data;
         console.log('Processo carregado do banco:', dadosRecebidos);
         
-        // Atribuir todos os dados ao objeto processo
         Object.assign(processo, dadosRecebidos);
         
       } catch (error) {
@@ -128,12 +118,10 @@ export default {
       }
     };
     
-    // Atualizar o processo
     const atualizarProcesso = async (dadosProcesso) => {
       try {
         salvando.value = true;
         
-        // Obter o token do localStorage
         const token = localStorage.getItem('token');
         
         if (!token) {
@@ -149,10 +137,8 @@ export default {
         
         console.log('Enviando dados para atualização:', dadosProcesso);
         
-        // Garantir que o ID está incluso nos dados
         dadosProcesso.id = processo.id;
         
-        // Enviar dados para a API
         await axios.put(`https://localhost:7041/api/processo/${processo.id}`, dadosProcesso, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -160,7 +146,6 @@ export default {
           }
         });
         
-        // Exibir mensagem de sucesso
         toast.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -168,7 +153,6 @@ export default {
           life: 3000
         });
         
-        // Aguardar para mostrar o toast antes de redirecionar
         setTimeout(() => {
           router.push('/processos');
         }, 3000);
@@ -220,7 +204,6 @@ export default {
       }
     };
     
-    // Ciclo de vida
     onMounted(() => {
       const processoId = props.id || (route.params && route.params.id);
       if (processoId) {

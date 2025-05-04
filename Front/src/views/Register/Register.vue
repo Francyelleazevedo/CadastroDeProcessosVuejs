@@ -1,6 +1,5 @@
 <template>
     <div class="register-page flex align-items-center justify-content-center">
-      <!-- Componente Toast -->
       <PrimeToast position="top-right" />
       
       <div class="surface-card p-5 shadow-4 border-round w-full lg:w-6">
@@ -125,14 +124,12 @@
       const toast = useToast();
       const router = useRouter();
       
-      // Dados reativos
       const name = ref('');
       const email = ref('');
       const password = ref('');
       const loading = ref(false);
       const submitted = ref(false);
   
-      // Validações
       const isValidEmail = computed(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return email.value && emailRegex.test(email.value);
@@ -158,14 +155,11 @@
         isValidPassword.value
       );
       
-      // Força da senha
       const passwordStrength = computed(() => {
         let strength = 0;
         if (password.value.length > 0) {
-          // Iniciar com 20% pelo menos para dar feedback visual
           strength = 20;
           
-          // Adicionar pontuação para cada critério atendido
           if (minLengthValid.value) strength += 15;
           if (uppercaseValid.value) strength += 15;
           if (lowercaseValid.value) strength += 15;
@@ -176,9 +170,9 @@
       });
       
       const passwordStrengthColor = computed(() => {
-        if (passwordStrength.value < 30) return '#dc3545'; // vermelho
-        if (passwordStrength.value < 60) return '#ffc107'; // amarelo
-        if (passwordStrength.value < 80) return '#20c997'; // turquesa
+        if (passwordStrength.value < 30) return '#dc3545'; 
+        if (passwordStrength.value < 60) return '#ffc107'; 
+        if (passwordStrength.value < 80) return '#20c997'; 
         return '#198754'; // verde
       });
       
@@ -189,7 +183,6 @@
         return 'Forte';
       });
       
-      // Método helper para exibir toasts
       const showToast = (severity, summary, detail) => {
         const icons = {
           success: 'pi pi-check',
@@ -220,7 +213,6 @@
         loading.value = true;
         
         try {
-          // Chamada para o backend
           const response = await fetch('https://localhost:7041/api/auth/registrar', {
             method: 'POST',
             headers: {
@@ -233,10 +225,8 @@
             })
           });
           
-          // Capturar e logar texto da resposta mesmo com erro
           const responseText = await response.text();
           
-          // Tentar parsear como JSON se possível
           let data;
           try {
             data = JSON.parse(responseText);
@@ -248,10 +238,8 @@
             throw new Error(data?.message || 'Falha no registro');
           }
           
-          // Se chegarmos aqui, a resposta está ok
           showToast('success', 'Conta criada', 'Redirecionando para o login...');
           
-          // Navegar para o login após registro bem-sucedido
           setTimeout(() => {
             router.push('/');
           }, 2000);
@@ -322,7 +310,6 @@
     border-left: 4px solid var(--primary-color);
   }
   
-  /* Barra de progresso da força da senha */
   .progress-container {
     width: 100%;
     height: 6px;
@@ -337,23 +324,19 @@
     transition: width 0.3s, background-color 0.3s;
   }
   
-  /* Melhoria nos estilos dos inputs quando focados */
   :deep(.p-inputtext:enabled:focus) {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 1px var(--primary-color);
   }
   
-  /* Botão com transição suave */
   :deep(.p-button) {
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   }
   
-  /* Efeito hover em links */
   a.text-blue-500 {
     transition: color 0.2s;
   }
   
-  /* Estilos personalizados para o toast */
   :deep(.p-toast) {
     opacity: 1;
     top: 20px;
@@ -375,28 +358,24 @@
     border: none;
   }
   
-  /* Toast de Sucesso */
   :deep(.p-toast .p-toast-message.p-toast-message-success .p-toast-message-content) {
     background: linear-gradient(145deg, var(--green-50), var(--green-100));
     border-bottom: 3px solid var(--green-500);
     color: var(--green-900);
   }
   
-  /* Toast de Informação */
   :deep(.p-toast .p-toast-message.p-toast-message-info .p-toast-message-content) {
     background: linear-gradient(145deg, var(--blue-50), var(--blue-100));
     border-bottom: 3px solid var(--blue-500);
     color: var(--blue-900);
   }
   
-  /* Toast de Aviso */
   :deep(.p-toast .p-toast-message.p-toast-message-warn .p-toast-message-content) {
     background: linear-gradient(145deg, var(--yellow-50), var(--yellow-100));
     border-bottom: 3px solid var(--yellow-500);
     color: var(--yellow-900);
   }
   
-  /* Toast de Erro */
   :deep(.p-toast .p-toast-message.p-toast-message-error .p-toast-message-content) {
     background: linear-gradient(145deg, var(--pink-50), var(--pink-100));
     border-bottom: 3px solid var(--pink-500);
@@ -448,7 +427,6 @@
     margin-bottom: 0.25rem;
   }
   
-  /* Animação de entrada e saída do toast */
   :deep(.p-toast-top-right .p-toast-message) {
     transform-origin: top right;
     animation: toastSlideDown 0.3s;
@@ -465,7 +443,6 @@
     }
   }
   
-  /* Estilo do botão de fechamento do toast */
   :deep(.p-toast .p-toast-message .p-toast-icon-close) {
     width: 2rem;
     height: 2rem;

@@ -19,13 +19,11 @@
         </div>
       </div>
   
-      <!-- Loading spinner -->
       <div v-if="loading" class="flex justify-content-center">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
       </div>
   
       <div v-else class="grid">
-        <!-- Informações principais -->
         <div class="col-12 md:col-6">
           <div class="card h-full">
             <div class="card-header flex align-items-center">
@@ -63,7 +61,6 @@
           </div>
         </div>
   
-        <!-- Localização -->
         <div class="col-12 md:col-6">
           <div class="card h-full">
             <div class="card-header flex align-items-center">
@@ -95,7 +92,6 @@
           </div>
         </div>
   
-        <!-- Status do processo -->
         <div class="col-12 mt-4">
           <div class="card">
             <div class="card-header flex align-items-center">
@@ -113,7 +109,6 @@
                   />
                 </div>
                 <div v-if="!processo.dataVisualizacao">
-                  <!-- Botão já está no cabeçalho quando o processo não foi visualizado -->
                 </div>
               </div>
             </div>
@@ -121,7 +116,6 @@
         </div>
       </div>
   
-      <!-- Mensagens de erro -->
       <PrimeToast />
     </div>
   </template>
@@ -154,7 +148,6 @@
       };
     },
     created() {
-      // Garantir que temos um ID válido
       const processoId = this.id || (this.$route && this.$route.params && this.$route.params.id);
       
       if (!processoId) {
@@ -178,7 +171,6 @@
       try {
         this.loading = true;
         
-        // Obter o token do localStorage
         const token = localStorage.getItem('token');
         
         if (!token) {
@@ -197,7 +189,6 @@
           return;
         }
         
-        // Usar o ID passado como parâmetro ou obter da rota
         const id = processoId || this.id || (this.$route && this.$route.params && this.$route.params.id);
         
         if (!id) {
@@ -207,7 +198,6 @@
         
         console.log('Carregando processo com ID:', id);
         
-        // Incluir o token na requisição
         const response = await axios.get(`https://localhost:7041/api/processo/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -251,7 +241,6 @@
     },
     async confirmarVisualizacao() {
   try {
-    // Obter o token do localStorage
     const token = localStorage.getItem('token');
     
     if (!token) {
@@ -270,7 +259,6 @@
       return;
     }
     
-    // Garantir que temos um ID válido
     const id = this.processo.id || this.id || (this.$route && this.$route.params && this.$route.params.id);
     
     if (!id) {
@@ -289,7 +277,6 @@
     this.loading = true;
     console.log('Confirmando visualização do processo com ID:', id);
     
-    // Chamada à API para confirmar visualização com o token
     await axios.post(`https://localhost:7041/api/processo/${id}/confirmar-visualizacao`, {}, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -297,10 +284,8 @@
       }
     });
     
-    // Atualiza o status localmente
     this.processo.dataVisualizacao = new Date().toISOString();
     
-    // Exibe o toast de sucesso
     if (this.$toast) {
       this.$toast.add({
         severity: 'success',
@@ -310,17 +295,15 @@
       });
     }
     
-    // Aguarda 2 segundos antes de redirecionar (tempo suficiente para o usuário ver o toast)
     setTimeout(() => {
       if (this.$router) {
-        this.$router.push('/processos'); // Redireciona para a tela de listagem
+        this.$router.push('/processos'); 
       }
     }, 2000);
     
   } catch (error) {
     console.error('Erro ao confirmar visualização:', error);
     
-    // Verificar se é um erro de autenticação
     if (error.response && error.response.status === 401) {
       console.error('Token expirado ou inválido');
       if (this.$toast) {
@@ -370,7 +353,7 @@
           }).format(data);
         } catch (error) {
           console.error('Erro ao formatar data:', error);
-          return dataIso; // Retorna a string original em caso de erro
+          return dataIso; 
         }
       },
       getStatusText() {

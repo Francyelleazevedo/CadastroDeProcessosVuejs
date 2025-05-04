@@ -1,4 +1,3 @@
-// components/NPUInput.vue
 <template>
   <div class="field">
     <label :for="id" class="block mb-2 font-bold">
@@ -56,9 +55,8 @@ export default {
           const regex = /[^0-9]/g;
           let value = e.target.value.replace(regex, '');
           
-          // Limitar o número total de dígitos com base na máscara
           const digitCount = (binding.value.match(/9/g) || []).length;
-          value = value.slice(0, digitCount); // Limita aos dígitos esperados
+          value = value.slice(0, digitCount);
           
           let masked = '';
           let j = 0;
@@ -73,7 +71,6 @@ export default {
           
           e.target.value = masked;
           
-          // Disparar evento de input para atualizar o v-model
           el.dispatchEvent(new Event('input'));
         });
       }
@@ -83,20 +80,16 @@ export default {
   setup(props, { emit }) {
     const npuValue = ref(props.modelValue);
     
-    // Observar mudanças no valor do modelo
     watch(() => props.modelValue, (newValue) => {
       npuValue.value = newValue;
     });
     
-    // Emitir mudanças para o componente pai
     watch(npuValue, (newValue) => {
       emit('update:modelValue', newValue);
       emit('change', newValue);
     });
     
-    // Validação do NPU (opcionalmente, pode ser expandida)
     const validarNPU = (npu) => {
-      // Validação básica de formato
       const regex = /^\d{7}-\d{2}\.\d{4}\.\d{1}\.\d{2}\.\d{4}$/;
       return regex.test(npu);
     };
@@ -112,7 +105,7 @@ export default {
 <style scoped>
 :deep(.p-inputtext) {
   width: 100%;
-  height: 54px; /* Garante altura consistente */
+  height: 54px; 
 }
 
 :deep(.p-inputtext.p-inputtext-lg) {
