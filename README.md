@@ -28,14 +28,14 @@ SQL Server
 **Edição de Processos:** Modificação de processos existentes \
 **Exclusão de Processos:** Remoção de processos com confirmação \
 **Confirmação de Visualização:** Marcação de processos como visualizados \
-**Filtro por UF e Município:** Seleção hierárquica de localidades \
+**Filtro por UF e Município:** Seleção hierárquica de localidades 
 
 **Arquitetura**
 O projeto segue uma arquitetura de serviços para organizar a comunicação com a API:
 
 httpService: Serviço base para todas as requisições HTTP, gerenciando tokens e tratamento de erros \
 apiService: Mapeamento organizado de todas as rotas da API \
-authService: Gerenciamento de autenticação e sessão do usuário \
+authService: Gerenciamento de autenticação e sessão do usuário 
 
 **Componentes Principais**
 
@@ -44,7 +44,7 @@ authService: Gerenciamento de autenticação e sessão do usuário \
 **ProcessList:** Listagem de processos com funcionalidades de CRUD \
 **ProcessForm:** Formulário compartilhado para criação e edição de processos \
 **ProcessDetails:** Visualização detalhada de um processo específico \
-**Seletores de UF/Município:** Componentes para seleção hierárquica de localidades \
+**Seletores de UF/Município:** Componentes para seleção hierárquica de localidades 
 
 **Instalação e Configuração**
 Requisitos
@@ -67,7 +67,7 @@ npm install
 npm run serve
 
 **Configuração Backend**
-bash# Navegar para a pasta do backend
+bash# Navegar para a pasta do backend \
 cd cadastro-processos/Back
 
 # Restaurar pacotes
@@ -110,7 +110,7 @@ Em caso de token expirado, o usuário é redirecionado para o login
 **Componentes Reutilizáveis:** Formulários e elementos UI compartilhados \
 **Tratamento de Erros:** Mensagens de erro amigáveis com o componente Toast \
 **Responsividade:** Layout adaptável para diferentes tamanhos de tela \
-**Confirmações de Ações:** Diálogos de confirmação para ações irreversíveis \
+**Confirmações de Ações:** Diálogos de confirmação para ações irreversíveis 
 
 Desenvolvido por: Francyelle Azevedo dos Santos
 Versão: 1.0.0
