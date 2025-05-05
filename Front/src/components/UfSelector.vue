@@ -49,7 +49,6 @@ export default {
   setup(props, { emit }) {
     const selectedUF = ref(props.modelValue);
     
-    // Lista de UFs
     const ufs = ref([
       { nome: 'Acre', sigla: 'AC' },
       { nome: 'Alagoas', sigla: 'AL' },

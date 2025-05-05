@@ -168,6 +168,8 @@ import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
+import apiService from '@/services/api.service';
+import authService from '@/services/auth.service';
 
 export default {
   name: 'ProcessosList',
@@ -188,7 +190,7 @@ export default {
     const deleteDialogVisible = ref(false);
     const selectedProcesso = ref(null);
     const globalFilterValue = ref('');
-    const first = ref(0); // Adicionado a definição de first
+    const first = ref(0); 
     const lazyParams = ref({
       page: 1,
       rows: 10,
@@ -211,9 +213,8 @@ export default {
     const fetchProcessos = async () => {
       loading.value = true;
       try {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
+        // Verifica se o usuário está autenticado
+        if (!authService.isAuthenticated()) {
           toast.add({
             severity: 'error',
             summary: 'Não autorizado',
@@ -224,41 +225,37 @@ export default {
           return;
         }
         
+        // Constrói a string de consulta da mesma forma que estava antes
         const page = lazyParams.value.page;
         const pageSize = lazyParams.value.rows;
         const sortField = lazyParams.value.sortField || '';
         const sortOrder = lazyParams.value.sortOrder || 1;
         
-        const response = await fetch(
-          `https://localhost:7041/api/processo?page=${page}&pageSize=${pageSize}&sortField=${sortField}&sortOrder=${sortOrder}`, 
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        // URL com querystring no formato exato que a API espera
+        const queryParams = `page=${page}&pageSize=${pageSize}&sortField=${sortField}&sortOrder=${sortOrder}`;
         
-        if (!response.ok) {
-          if (response.status === 401) {
-            toast.add({
-              severity: 'error',
-              summary: 'Sessão expirada',
-              detail: 'Sua sessão expirou. Por favor, faça login novamente.',
-              life: 3000
-            });
-            router.push('/login');
-            return;
-          }
-          throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        // Usa o apiService.get diretamente para preservar a compatibilidade exata com a API
+        const data = await apiService.processos.getAll({ params: queryParams });
         processos.value = data;
         
       } catch (error) {
         console.error('Erro ao buscar processos:', error);
+        
+        // Verifica se é um erro de autenticação
+        if (error.message && error.message.includes('401')) {
+          toast.add({
+            severity: 'error',
+            summary: 'Sessão expirada',
+            detail: 'Sua sessão expirou. Por favor, faça login novamente.',
+            life: 3000
+          });
+          
+          // Faz logout e redireciona para login
+          authService.logout();
+          router.push('/login');
+          return;
+        }
+        
         toast.add({
           severity: 'error',
           summary: 'Erro',
@@ -342,9 +339,8 @@ export default {
       deleteLoading.value = true;
       
       try {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
+        // Verifica se o usuário está autenticado
+        if (!authService.isAuthenticated()) {
           toast.add({
             severity: 'error',
             summary: 'Não autorizado',
@@ -355,17 +351,8 @@ export default {
           return;
         }
         
-        const response = await fetch(`https://localhost:7041/api/processo/${selectedProcesso.value.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Erro HTTP: ${response.status}`);
-        }
+        // Usa o apiService para excluir o processo
+        await apiService.processos.delete(selectedProcesso.value.id);
         
         toast.add({
           severity: 'success',
@@ -378,6 +365,22 @@ export default {
         closeDeleteDialog();
       } catch (error) {
         console.error('Erro ao excluir processo:', error);
+        
+        // Verifica se é um erro de autenticação
+        if (error.message && error.message.includes('401')) {
+          toast.add({
+            severity: 'error',
+            summary: 'Sessão expirada',
+            detail: 'Sua sessão expirou. Por favor, faça login novamente.',
+            life: 3000
+          });
+          
+          // Faz logout e redireciona para login
+          authService.logout();
+          router.push('/login');
+          return;
+        }
+        
         toast.add({
           severity: 'error',
           summary: 'Erro',

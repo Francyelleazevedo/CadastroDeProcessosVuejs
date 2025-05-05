@@ -28,11 +28,12 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import { ref, onMounted, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import ProcessoForm from '@/components/ProcessoForm.vue';
+import apiService from '@/services/api.service';
+import authService from '@/services/auth.service';
 
 export default {
   name: 'EditarProcesso',
@@ -68,9 +69,7 @@ export default {
       try {
         loading.value = true;
         
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
+        if (!authService.isAuthenticated()) {
           toast.add({
             severity: 'error',
             summary: 'Não autorizado',
@@ -81,28 +80,24 @@ export default {
           return;
         }
         
-        const response = await axios.get(`https://localhost:7041/api/processo/${processoId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        const dadosRecebidos = await apiService.processos.getById(processoId);
         
-        const dadosRecebidos = response.data;
         console.log('Processo carregado do banco:', dadosRecebidos);
         
         Object.assign(processo, dadosRecebidos);
         
       } catch (error) {
         console.error('Erro ao carregar processo:', error);
-        
-        if (error.response && error.response.status === 401) {
+
+        if (error.message && error.message.includes('401')) {
           toast.add({
             severity: 'error',
             summary: 'Sessão expirada',
             detail: 'Sua sessão expirou. Por favor, faça login novamente.',
             life: 3000
           });
+          
+          authService.logout();
           router.push('/login');
           return;
         }
@@ -122,9 +117,8 @@ export default {
       try {
         salvando.value = true;
         
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
+        // Verifica se o usuário está autenticado
+        if (!authService.isAuthenticated()) {
           toast.add({
             severity: 'error',
             summary: 'Não autorizado',
@@ -139,34 +133,45 @@ export default {
         
         dadosProcesso.id = processo.id;
         
-        await axios.put(`https://localhost:7041/api/processo/${processo.id}`, dadosProcesso, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        const resultado = await apiService.processos.update(processo.id, dadosProcesso);
         
-        toast.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Processo atualizado com sucesso!',
-          life: 3000
-        });
-        
-        setTimeout(() => {
-          router.push('/processos');
-        }, 3000);
-        
+        if (resultado) {
+          toast.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Processo atualizado com sucesso!',
+            life: 3000
+          });
+          
+          setTimeout(() => {
+            router.push('/processos');
+          }, 3000);
+        } else {
+          console.warn('Atualização realizada, mas sem retorno de dados');
+          
+          toast.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Processo parece ter sido atualizado com sucesso!',
+            life: 3000
+          });
+          
+          setTimeout(() => {
+            router.push('/processos');
+          }, 3000);
+        }
       } catch (error) {
         console.error('Erro ao salvar processo:', error);
         
-        if (error.response && error.response.status === 401) {
+        if (error.message && error.message.includes('401')) {
           toast.add({
             severity: 'error',
             summary: 'Sessão expirada',
             detail: 'Sua sessão expirou. Por favor, faça login novamente.',
             life: 3000
           });
+          
+          authService.logout();
           router.push('/login');
           return;
         }

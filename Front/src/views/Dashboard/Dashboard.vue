@@ -159,6 +159,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import apiService from '@/services/api.service';
+import authService from '@/services/auth.service';
 
 export default {
   name: 'DashboardView',
@@ -253,86 +255,82 @@ export default {
       maintainAspectRatio: false
     };
 
-  const pieChartData = computed(() => {
-  const labels = Object.keys(processosPorUF.value).map(uf => uf.toUpperCase());
-  const dados = Object.values(processosPorUF.value);
-  const total = dados.reduce((acc, curr) => acc + curr, 0);
-  
-  const porcentagens = dados.map(valor => 
-    total > 0 ? ((valor / total) * 100) : 0
-  );
-  
-  return {
-    labels: labels,
-    datasets: [
-      {
-        data: porcentagens,
-        backgroundColor: [
-          '#6366F1', '#8B5CF6', '#EC4899', '#F43F5E', '#F97316',
-          '#FBBF24', '#84CC16', '#10B981', '#06B6D4', '#3B82F6'
-        ],
-        hoverBackgroundColor: [
-          '#4F46E5', '#7C3AED', '#DB2777', '#E11D48', '#EA580C',
-          '#D97706', '#65A30D', '#059669', '#0891B2', '#2563EB'
-        ],
-        borderWidth: 0
-      }
-    ]
-  };
-});
+    const pieChartData = computed(() => {
+      const labels = Object.keys(processosPorUF.value).map(uf => uf.toUpperCase());
+      const dados = Object.values(processosPorUF.value);
+      const total = dados.reduce((acc, curr) => acc + curr, 0);
+      
+      const porcentagens = dados.map(valor => 
+        total > 0 ? ((valor / total) * 100) : 0
+      );
+      
+      return {
+        labels: labels,
+        datasets: [
+          {
+            data: porcentagens,
+            backgroundColor: [
+              '#6366F1', '#8B5CF6', '#EC4899', '#F43F5E', '#F97316',
+              '#FBBF24', '#84CC16', '#10B981', '#06B6D4', '#3B82F6'
+            ],
+            hoverBackgroundColor: [
+              '#4F46E5', '#7C3AED', '#DB2777', '#E11D48', '#EA580C',
+              '#D97706', '#65A30D', '#059669', '#0891B2', '#2563EB'
+            ],
+            borderWidth: 0
+          }
+        ]
+      };
+    });
 
-const pieChartOptions = {
-  plugins: {
-    legend: {
-      position: 'right',
-      labels: {
-        usePointStyle: true,
-        font: {
-          size: 12
+    const pieChartOptions = {
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            usePointStyle: true,
+            font: {
+              size: 12
+            },
+            generateLabels: (chart) => {
+              const datasets = chart.data.datasets;
+              const labels = chart.data.labels;
+              
+              return labels.map((label, i) => {
+                const value = datasets[0].data[i];
+                return {
+                  text: `${label}: ${value.toFixed(1)}%`,
+                  fillStyle: datasets[0].backgroundColor[i],
+                  hidden: isNaN(datasets[0].data[i]) || datasets[0].data[i] === 0,
+                  index: i
+                };
+              });
+            }
+          }
         },
-        generateLabels: (chart) => {
-          const datasets = chart.data.datasets;
-          const labels = chart.data.labels;
-          
-          return labels.map((label, i) => {
-            const value = datasets[0].data[i];
-            return {
-              text: `${label}: ${value.toFixed(1)}%`,
-              fillStyle: datasets[0].backgroundColor[i],
-              hidden: isNaN(datasets[0].data[i]) || datasets[0].data[i] === 0,
-              index: i
-            };
-          });
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: {
+            size: 14,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: 14
+          },
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              return `${label}: ${value.toFixed(1)}%`;
+            }
+          }
         }
-      }
-    },
-    tooltip: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      titleFont: {
-        size: 14,
-        weight: 'bold'
       },
-      bodyFont: {
-        size: 14
-      },
-      padding: 12,
-      cornerRadius: 8,
-      callbacks: {
-        label: function(context) {
-          const label = context.label || '';
-          const value = context.raw || 0;
-          return `${label}: ${value.toFixed(1)}%`;
-        }
-      }
-    }
-  },
-  cutout: '60%',
-  responsive: true,
-  maintainAspectRatio: false
-};
-
-    const getToken = () => {
-      return localStorage.getItem('token');
+      cutout: '60%',
+      responsive: true,
+      maintainAspectRatio: false
     };
 
     const formatarData = (dataString) => {
@@ -356,29 +354,18 @@ const pieChartOptions = {
           mes = 12;
           ano = ano - 1;
         }
+      } else if (periodoSelecionado.value.id === 3) {
+        // Implementação futura para trimestre atual
+      } else if (periodoSelecionado.value.id === 4) {
+        // Implementação futura para ano atual
       }
       
       try {
-        const token = getToken();
-        
-        if (!token) {
+        if (!authService.isAuthenticated()) {
           throw new Error('Token não encontrado. Faça login novamente.');
         }
         
-        const response = await fetch(`https://localhost:7041/api/relatorio/mensal?mes=${mes}&ano=${ano}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || 'Erro ao buscar dados do dashboard');
-        }
-        
-        const data = await response.json();
+        const data = await apiService.relatorios.getMensal(mes, ano);
         
         totalProcessos.value = data.totalProcessos || 0;
         processosSemVisualizacao.value = data.processosSemVisualizacao || 0;
@@ -397,6 +384,7 @@ const pieChartOptions = {
         
         if (error.toString().includes('Token não encontrado')) {
           erro.value = 'Erro de autenticação. Faça login novamente.';
+          router.push('/login');
         } else {
           erro.value = 'Não foi possível carregar os dados do dashboard. Tente novamente mais tarde.';
         }

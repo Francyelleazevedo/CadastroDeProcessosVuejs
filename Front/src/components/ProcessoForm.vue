@@ -213,7 +213,7 @@ export default {
 :deep(.p-button-lg) {
   padding: 0.5rem 1.25rem;
   font-size: 0.9rem;
-  height: 44px; /* Altura reduzida */
+  height: 44px; 
 }
 
 :deep(.p-inputtext:enabled:focus) {

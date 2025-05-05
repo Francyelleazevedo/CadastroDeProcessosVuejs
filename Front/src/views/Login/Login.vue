@@ -59,19 +59,19 @@
         />
         
         <div class="mt-5 text-center">
-  <span class="text-600 mr-2">Novo no sistema?</span>
-  <router-link 
-    to="/register" 
-    style="
-      color: #2563EB; 
-      font-weight: 500; 
-      text-decoration: none;
-      cursor: pointer;
-    "
-  >
-    Crie uma conta
-  </router-link>
-</div>
+          <span class="text-600 mr-2">Novo no sistema?</span>
+          <router-link 
+            to="/register" 
+            style="
+              color: #2563EB; 
+              font-weight: 500; 
+              text-decoration: none;
+              cursor: pointer;
+            "
+          >
+            Crie uma conta
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -81,6 +81,7 @@
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import authService from '@/services/auth.service';
 
 export default {
   name: 'LoginView',
@@ -113,60 +114,29 @@ export default {
     };
     
     const handleLogin = async () => {
-  submitted.value = true;
-  
-  if (!email.value || !password.value) {
-    showToast('warn', 'Campos obrigatórios', 'Por favor, preencha todos os campos');
-    return;
-  }
-  
-  loading.value = true;
-  
-  try {
-    const response = await fetch('https://localhost:7041/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email.value,
-        senha: password.value
-      })
-    });
-    
-    const responseText = await response.text();
-    
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.log('Resposta não é um JSON válido');
-    }
-    
-    if (!response.ok) {
-      throw new Error(data?.message || 'Falha na autenticação');
-    }
-    
-    if (data) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user || { email: email.value }));
+      submitted.value = true;
       
-      showToast('success', 'Login bem-sucedido');
+      if (!email.value || !password.value) {
+        showToast('warn', 'Campos obrigatórios', 'Por favor, preencha todos os campos');
+        return;
+      }
       
-      setTimeout(() => {
-  router.push('/dashboard');
-}, 1500);
-    }
-  } catch (error) {
-    console.error('Erro de login:', error);
-    showToast('error', 'Falha no login', error.message || 'Verifique suas credenciais e tente novamente');
-  } finally {
-    loading.value = false;
-  }
-};
-    
-    const goToRegister = () => {
-      router.push('/register');
+      loading.value = true;
+      
+      try {
+        await authService.login(email.value, password.value);
+        
+        showToast('success', 'Login bem-sucedido');
+        
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1500);
+      } catch (error) {
+        console.error('Erro de login:', error);
+        showToast('error', 'Falha no login', error.message || 'Verifique suas credenciais e tente novamente');
+      } finally {
+        loading.value = false;
+      }
     };
     
     return {
@@ -175,8 +145,7 @@ export default {
       rememberMe,
       loading,
       submitted,
-      handleLogin,
-      goToRegister
+      handleLogin
     };
   }
 }

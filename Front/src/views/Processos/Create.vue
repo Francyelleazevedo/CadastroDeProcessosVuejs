@@ -1,4 +1,3 @@
-// Create.vue
 <template>
   <div class="card p-4">
     <div class="flex justify-content-between align-items-center mb-4">
@@ -18,11 +17,12 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import ProcessoForm from '@/components/ProcessoForm.vue';
+import apiService from '@/services/api.service';
+import authService from '@/services/auth.service';
 
 export default {
   name: 'NovoProcesso',
@@ -48,9 +48,7 @@ export default {
       try {
         salvando.value = true;
         
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
+        if (!authService.isAuthenticated()) {
           toast.add({
             severity: 'error',
             summary: 'Não autorizado',
@@ -63,12 +61,7 @@ export default {
         
         console.log('Enviando dados:', dadosProcesso);
         
-        await axios.post('https://localhost:7041/api/processo', dadosProcesso, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        await apiService.processos.create(dadosProcesso);
         
         toast.add({
           severity: 'success',
@@ -84,13 +77,15 @@ export default {
       } catch (error) {
         console.error('Erro ao salvar processo:', error);
         
-        if (error.response && error.response.status === 401) {
+        if (error.message && error.message.includes('401')) {
           toast.add({
             severity: 'error',
             summary: 'Sessão expirada',
             detail: 'Sua sessão expirou. Por favor, faça login novamente.',
             life: 3000
           });
+
+          authService.logout();
           router.push('/login');
           return;
         }
