@@ -2,7 +2,8 @@
 **Visão Geral**
 O Sistema de Cadastro de Processos é uma aplicação web desenvolvida com Vue.js e .NET para gerenciar processos cadastrais. A aplicação permite visualizar, cadastrar, editar e excluir processos, além de controlar o status de visualização dos mesmos.
 
-**Tecnologias Utilizadas**  \
+**Tecnologias Utilizadas**  
+
 **Frontend**
 
 Vue.js 3 \
@@ -15,7 +16,7 @@ Fetch API (para comunicação com o backend)
 
 .NET Core API \
 Entity Framework \
-SQL Server \
+SQL Server 
 
 **Funcionalidades**
 
