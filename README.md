@@ -1,8 +1,9 @@
 # Sistema de Cadastro de Processos
-Visão Geral
+**Visão Geral**
 O Sistema de Cadastro de Processos é uma aplicação web desenvolvida com Vue.js e .NET para gerenciar processos cadastrais. A aplicação permite visualizar, cadastrar, editar e excluir processos, além de controlar o status de visualização dos mesmos.
-Tecnologias Utilizadas
-Frontend
+
+**Tecnologias Utilizadas**
+**Frontend**
 
 Vue.js 3
 PrimeVue (componentes UI)
@@ -10,13 +11,13 @@ Vue Router (para navegação)
 Composition API & Options API
 Fetch API (para comunicação com o backend)
 
-Backend
+**Backend**
 
 .NET Core API
 Entity Framework
 SQL Server
 
-Funcionalidades
+**Funcionalidades**
 
 Autenticação de Usuário: Login com token JWT e persistência de sessão
 Dashboard: Visualização geral de processos cadastrados
@@ -28,14 +29,14 @@ Exclusão de Processos: Remoção de processos com confirmação
 Confirmação de Visualização: Marcação de processos como visualizados
 Filtro por UF e Município: Seleção hierárquica de localidades
 
-Arquitetura
+**Arquitetura**
 O projeto segue uma arquitetura de serviços para organizar a comunicação com a API:
 
 httpService: Serviço base para todas as requisições HTTP, gerenciando tokens e tratamento de erros
 apiService: Mapeamento organizado de todas as rotas da API
 authService: Gerenciamento de autenticação e sessão do usuário
 
-Componentes Principais
+**Componentes Principais**
 
 Sidebar: Menu lateral responsivo para navegação entre funcionalidades
 Login/Register: Telas de autenticação e criação de conta
@@ -44,7 +45,7 @@ ProcessForm: Formulário compartilhado para criação e edição de processos
 ProcessDetails: Visualização detalhada de um processo específico
 Seletores de UF/Município: Componentes para seleção hierárquica de localidades
 
-Instalação e Configuração
+**Instalação e Configuração**
 Requisitos
 
 Node.js (v14+)
@@ -53,7 +54,7 @@ SQL Server
 
 Instalação Frontend
 bash# Clonar o repositório
-git clone [url-do-repositorio]
+git clone 
 
 # Entrar na pasta do projeto
 cd cadastro-processos/Front
