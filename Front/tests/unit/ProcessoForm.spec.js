@@ -15,7 +15,6 @@ describe('ProcessoForm', () => {
   let wrapper;
   
   beforeEach(() => {
-    // Usar shallowMount em vez de mount para evitar problemas com componentes filhos
     wrapper = shallowMount(ProcessoForm, {
       props: {
         modelValue: {
@@ -37,24 +36,20 @@ describe('ProcessoForm', () => {
   });
   
   it('renderiza o formulário corretamente', () => {
-    // Verificar se a div principal existe
     expect(wrapper.find('.grid').exists()).toBe(true);
     
-    // Verificar se os componentes estão presentes por suas tags
     expect(wrapper.findComponent({ name: 'NPUInput' }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'UFSelector' }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'MunicipioSelector' }).exists()).toBe(true);
   });
   
   it('atualiza o modelValue quando os dados do formulário mudam', async () => {
-    // Modificar um campo do formulário diretamente
+
     wrapper.vm.formData.nomeProcesso = "Novo Processo";
     await nextTick();
     
-    // Verificar se o evento update:modelValue foi emitido
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     
-    // Verificar o valor no último evento emitido
     const lastEvent = wrapper.emitted('update:modelValue').slice(-1)[0][0];
     expect(lastEvent.nomeProcesso).toBe("Novo Processo");
   });
@@ -77,7 +72,7 @@ describe('ProcessoForm', () => {
   });
   
   it('emite o evento voltar quando o método voltar é chamado', async () => {
-    // Chamar o método voltar diretamente
+
     wrapper.vm.voltar();
     await nextTick();
     
@@ -92,14 +87,12 @@ describe('ProcessoForm', () => {
   });
   
   it('chama onSubmit e mostra toast quando formulário é inválido', async () => {
-    // Criar um spy para o toast
+   
     const toastSpy = vi.spyOn(mockToast, 'add');
     
-    // Chamar onSubmit diretamente
     await wrapper.vm.onSubmit();
     await nextTick();
     
-    // Verificar se o toast foi chamado
     expect(toastSpy).toHaveBeenCalledWith(expect.objectContaining({
       severity: 'warn',
       summary: 'Validação'

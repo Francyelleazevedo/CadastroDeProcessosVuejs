@@ -47,9 +47,6 @@
             <PrimeCheckbox id="rememberme" v-model="rememberMe" :binary="true" class="mr-2" />
             <label for="rememberme" class="text-900 cursor-pointer">Lembrar-me</label>
           </div>
-          <a class="font-medium no-underline text-blue-500 text-right cursor-pointer hover:text-blue-700 transition-duration-150">
-            Esqueceu a senha?
-          </a>
         </div>
 
         <PrimeButton 
@@ -90,15 +87,12 @@ export default {
   setup() {
     const toast = useToast();
     const router = useRouter();
-    
-    // Dados reativos
     const email = ref('');
     const password = ref('');
     const rememberMe = ref(false);
     const loading = ref(false);
     const submitted = ref(false);
     
-    // Método helper para exibir toasts com estilo alternativo
     const showToast = (severity, summary, detail) => {
       const icons = {
         success: 'pi pi-check',
@@ -129,7 +123,6 @@ export default {
   loading.value = true;
   
   try {
-    // Chamada para o backend
     const response = await fetch('https://localhost:7041/api/auth/login', {
       method: 'POST',
       headers: {
@@ -141,7 +134,6 @@ export default {
       })
     });
     
-    // Capturar e logar texto da resposta mesmo com erro
     const responseText = await response.text();
     
     let data;
@@ -162,7 +154,7 @@ export default {
       showToast('success', 'Login bem-sucedido');
       
       setTimeout(() => {
-  router.push('/processos');
+  router.push('/dashboard');
 }, 1500);
     }
   } catch (error) {

@@ -67,7 +67,6 @@ export default {
     const isLoading = ref(props.loading);
     const codigoMunicipio = ref('');
     
-    // Função para obter o token de autenticação do localStorage
     const getToken = () => {
       return localStorage.getItem('token');
     };
@@ -102,7 +101,6 @@ export default {
         isLoading.value = true;
         municipios.value = [];
         
-        // Obter token do localStorage
         const token = getToken();
         
         if (!token) {
@@ -117,7 +115,6 @@ export default {
           return;
         }
         
-        // Incluir o token na requisição
         const response = await fetch(`https://localhost:7041/api/localidades/municipios/${uf}`, {
           method: 'GET',
           headers: {
@@ -166,7 +163,6 @@ export default {
       } catch (error) {
         console.error('Erro ao carregar municípios:', error);
         
-        // Tratamento específico para erros de autenticação
         if (error.message.includes('Sessão expirada') || error.message.includes('token')) {
           toast.add({
             severity: 'error',

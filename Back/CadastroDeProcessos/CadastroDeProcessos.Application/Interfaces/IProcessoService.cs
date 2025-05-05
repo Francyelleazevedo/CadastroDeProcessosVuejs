@@ -11,4 +11,5 @@ public interface IProcessoService
     Task AtualizarAsync(Processo processo);
     Task RemoverAsync(int id);
     Task ConfirmarVisualizacaoAsync(int id);
+    Task<IEnumerable<Processo>> ListarAsync();
 }

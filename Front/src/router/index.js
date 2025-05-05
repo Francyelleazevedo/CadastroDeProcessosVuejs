@@ -1,35 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/Login/Login.vue'
 import RegisterView from '../views/Register/Register.vue'
-import DashboardView from '../views/Dashboard/Dashboard.vue'
+import AppSidebar from '../components/Menu/Sidebar.vue'
 
-const routes = [
+const publicRoutes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { public: true }
   },
   {
-    path: '/register', 
+    path: '/register',
     name: 'novo-usuario',
-    component: RegisterView
-  },
+    component: RegisterView,
+    meta: { public: true }
+  }
+];
+
+const protectedRoutes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: DashboardView
+    component: () => import('../views/Dashboard/Dashboard.vue')
   },
   {
     path: '/processos',
     name: 'processos',
-    component: () => import('../views/Processos/Index.vue'),
-    meta: { requiresAuth: true } 
+    component: () => import('../views/Processos/Index.vue')
   },
   {
     path: '/processos/criar',
     name: 'criar-processo',
-    component: () => import('../views/Processos/Create.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../views/Processos/Create.vue')
   },
   {
     path: '/processos/:id',
@@ -42,20 +45,57 @@ const routes = [
     name: 'editar-processo',
     component:() => import('../views/Processos/Edit.vue'),
     props: true
+  }
+];
+
+const routes = [
+  {
+    path: '/',
+    redirect: '/login'
   },
+  
+  ...publicRoutes,
+  
+  {
+    path: '/',
+    component: AppSidebar,
+    children: protectedRoutes
+  },
+  
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    redirect: '/login'
   }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
-})
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const isAuthenticated = !!token;
+  const isPublic = to.meta.public === true;
+  
+  console.log('Navegando para:', to.path);
+  console.log('Autenticado:', isAuthenticated, 'Rota pública:', isPublic);
+  
+  if (!isAuthenticated && !isPublic) {
+    console.log('Acesso negado, redirecionando para login');
+    return next('/login');
+  }
+  
+  if (isAuthenticated && to.path === '/login') {
+    console.log('Já autenticado, redirecionando para dashboard');
+    return next('/dashboard');
+  }
+  
+  next();
+});
 
 router.afterEach((to) => {
   console.log(`Navegação concluída: ${to.path}`);
-})
+});
 
-export default router
+export default router;

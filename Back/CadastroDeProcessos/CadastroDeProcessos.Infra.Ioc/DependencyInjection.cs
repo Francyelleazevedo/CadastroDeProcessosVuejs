@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using CadastroDeProcessos.Application.Interfaces;
 using CadastroDeProcessos.Application.Services;
 using CadastroDeProcessos.Domain.Interfaces;
@@ -28,6 +26,8 @@ public static class DependencyInjection
         services.AddScoped<IIBGELocalidadeService, IBGELocalidadeService>();
 
         services.AddScoped<IUsuarioService, UsuarioService>();
+
+        services.AddScoped<IRelatorioService, RelatorioService>();
 
         // Identity
         services.AddIdentity<Usuario, IdentityRole>()

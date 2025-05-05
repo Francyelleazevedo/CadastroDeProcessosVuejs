@@ -17,7 +17,7 @@ namespace CadastroDeProcessos.Infra.Repository
 
         public async Task<IEnumerable<T>> ListarAsync()
         {
-            return await _dbSet.Where(e => EF.Property<bool>(e, "Ativo") == true).ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<T> ObterPorIdAsync(int id)

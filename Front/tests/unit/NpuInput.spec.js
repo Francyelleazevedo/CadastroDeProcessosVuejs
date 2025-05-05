@@ -49,7 +49,6 @@ describe('NPUInput', () => {
   it('atualiza v-model quando o valor muda', async () => {
     const input = wrapper.find('input');
     
-    // Simular digitação
     await input.setValue('1234567-89.0123.4.56.7890');
     await nextTick();
     
@@ -59,35 +58,28 @@ describe('NPUInput', () => {
   });
   
   it('atualiza o valor do input quando modelValue muda', async () => {
-    // Atualizar o modelValue via props
     await wrapper.setProps({ modelValue: '9876543-21.0987.6.54.3210' });
     await nextTick();
     
-    // Verificar se o valor do input foi atualizado
     expect(wrapper.vm.npuValue).toBe('9876543-21.0987.6.54.3210');
   });
   
   it('emite evento change quando o valor muda', async () => {
     const input = wrapper.find('input');
     
-    // Simular digitação
     await input.setValue('1234567-89.0123.4.56.7890');
     await nextTick();
     
-    // Verificar se o evento change foi emitido
     expect(wrapper.emitted('change')).toBeTruthy();
     expect(wrapper.emitted('change')[0]).toEqual(['1234567-89.0123.4.56.7890']);
   });
   
   it('adiciona classe p-invalid quando há erro', async () => {
-    // Verificar que inicialmente não tem a classe p-invalid
     expect(wrapper.find('input').classes()).not.toContain('p-invalid');
     
-    // Adicionar um erro
     await wrapper.setProps({ error: 'NPU inválido' });
     await nextTick();
     
-    // Verificar se a classe p-invalid foi adicionada
     expect(wrapper.find('input').classes()).toContain('p-invalid');
   });
   
@@ -95,7 +87,6 @@ describe('NPUInput', () => {
     // Verificar que inicialmente não há mensagem de erro
     expect(wrapper.find('.p-error').exists()).toBe(false);
     
-    // Adicionar um erro
     await wrapper.setProps({ error: 'NPU inválido' });
     await nextTick();
     

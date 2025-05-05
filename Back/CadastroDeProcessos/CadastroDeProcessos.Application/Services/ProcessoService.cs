@@ -10,6 +10,19 @@ namespace CadastroDeProcessos.Application.Services
         private readonly IProcessoRepository _processoRepository = processoRepository;
 
         #region Obter
+        public async Task<IEnumerable<Processo>> ListarAsync()
+        {
+            try
+            {
+                var processos = await _processoRepository.ListarAsync();
+                return processos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao obter lista de processos.", ex);
+            }
+        }
+
         public async Task<PagedResult<Processo>> ListarPaginadoAsync(int pageNumber, int pageSize)
         {
             if (pageNumber <= 0) throw new ArgumentException("O número da página deve ser maior que zero.", nameof(pageNumber));

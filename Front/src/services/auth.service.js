@@ -1,7 +1,7 @@
 const API_URL = 'https://localhost:7041/api/';
 
 export default {
-  // Login
+
   async login(username, password) {
     try {
       const response = await fetch(`${API_URL}auth/login`, {

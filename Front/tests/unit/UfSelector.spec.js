@@ -7,7 +7,6 @@ describe('UFSelector', () => {
   let wrapper;
   
   beforeEach(() => {
-    // Usar shallowMount para isolar o componente de seus filhos
     wrapper = shallowMount(UFSelector, {
       global: {
         stubs: {
@@ -40,19 +39,15 @@ describe('UFSelector', () => {
       error: 'Campo obrigatório'
     });
     
-    // Verificar label personalizado
     expect(wrapper.find('label').text()).toContain('Estado');
     
-    // Verificar mensagem de erro
     expect(wrapper.find('.p-error').exists()).toBe(true);
     expect(wrapper.find('.p-error').text()).toBe('Campo obrigatório');
   });
   
   it('contém a lista de todas as UFs brasileiras', () => {
-    // Verificar se todas as 27 UFs estão presentes
     expect(wrapper.vm.ufs.length).toBe(27);
     
-    // Verificar algumas UFs específicas
     const ufSiglas = wrapper.vm.ufs.map(uf => uf.sigla);
     expect(ufSiglas).toContain('SP');
     expect(ufSiglas).toContain('RJ');
@@ -62,11 +57,10 @@ describe('UFSelector', () => {
   });
   
   it('atualiza v-model quando selectedUF muda', async () => {
-    // Atualizar selectedUF diretamente
+    
     wrapper.vm.selectedUF = 'SP';
     await nextTick();
     
-    // Verificar se o evento update:modelValue foi emitido
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     expect(wrapper.emitted('update:modelValue')[0]).toEqual(['SP']);
   });
@@ -83,11 +77,9 @@ describe('UFSelector', () => {
     // Configurar o estado
     wrapper.vm.selectedUF = 'RJ';
     
-    // Chamar o método onChange
     wrapper.vm.onChange();
     await nextTick();
     
-    // Verificar se o evento change foi emitido
     expect(wrapper.emitted('change')).toBeTruthy();
     expect(wrapper.emitted('change')[0]).toEqual(['RJ']);
   });
