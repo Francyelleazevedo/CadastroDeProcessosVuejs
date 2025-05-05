@@ -1,4 +1,4 @@
-Sistema de Cadastro de Processos
+# Sistema de Cadastro de Processos
 Visão Geral
 O Sistema de Cadastro de Processos é uma aplicação web desenvolvida com Vue.js e .NET para gerenciar processos cadastrais. A aplicação permite visualizar, cadastrar, editar e excluir processos, além de controlar o status de visualização dos mesmos.
 Tecnologias Utilizadas
