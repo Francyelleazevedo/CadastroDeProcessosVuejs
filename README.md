@@ -52,9 +52,9 @@ Node.js (v14+)
 .NET 6+
 SQL Server
 
-Instalação Frontend
+**Instalação Frontend**
 bash# Clonar o repositório
-git clone 
+git clone https://github.com/Francyelleazevedo/CadastroDeProcessosVuejs.git
 
 # Entrar na pasta do projeto
 cd cadastro-processos/Front
@@ -64,7 +64,8 @@ npm install
 
 # Iniciar servidor de desenvolvimento
 npm run serve
-Configuração Backend
+
+**Configuração Backend**
 bash# Navegar para a pasta do backend
 cd cadastro-processos/Back
 
@@ -93,29 +94,21 @@ Estrutura de Diretórios
 │   ├── App.vue           # Componente raiz
 │   └── main.js           # Ponto de entrada
 └── ...
-Fluxo de Autenticação
+
+**Fluxo de Autenticação**
 
 O usuário acessa a aplicação e é redirecionado para a tela de login
 Após autenticação, um token JWT é armazenado no localStorage
 O token é incluído em todas as requisições subsequentes
 Em caso de token expirado, o usuário é redirecionado para o login
 
-Boas Práticas Implementadas
+**Boas Práticas Implementadas**
 
 Serviços Centralizados: Comunicação com a API organizada em serviços
 Componentes Reutilizáveis: Formulários e elementos UI compartilhados
 Tratamento de Erros: Mensagens de erro amigáveis com o componente Toast
 Responsividade: Layout adaptável para diferentes tamanhos de tela
 Confirmações de Ações: Diálogos de confirmação para ações irreversíveis
-
-Futuras Melhorias
-
-Implementação de testes unitários e E2E
-Exportação de dados em diferentes formatos
-Melhorias na visualização de histórico de processos
-Implementação de dashboard com estatísticas detalhadas
-Melhorias de acessibilidade
-
 
 Desenvolvido por: Francyelle Azevedo dos Santos
 Versão: 1.0.0
