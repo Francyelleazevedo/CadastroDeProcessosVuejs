@@ -5,8 +5,8 @@ O Sistema de Cadastro de Processos é uma aplicação web desenvolvida com Vue.j
 **Tecnologias Utilizadas**
 **Frontend**
 
-Vue.js 3
-PrimeVue (componentes UI)
+Vue.js 3 \
+PrimeVue (componentes UI)  
 Vue Router (para navegação)
 Composition API & Options API
 Fetch API (para comunicação com o backend)
